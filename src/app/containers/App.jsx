@@ -19,6 +19,7 @@ import pageURLs from 'constants/pagesURLs';
 import SecretPage from 'pageProviders/Secret';
 import ThemeProvider from 'misc/providers/ThemeProvider';
 import UserProvider from 'misc/providers/UserProvider';
+import ExecutionFactsListPage from "pageProviders/ExecutionFactsList";
 
 import actionsUser from '../actions/user';
 import Header from '../components/Header';
@@ -112,6 +113,10 @@ function App() {
                         />
                       )}
                       path={`${pageURLs[pages.login]}`}
+                    />
+                    <Route
+                      element={<ExecutionFactsListPage />}
+                      path={`${pageURLs[pages.executionFactsList]}`}
                     />
                     <Route
                       element={(
