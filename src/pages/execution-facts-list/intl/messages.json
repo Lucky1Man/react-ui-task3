@@ -1,0 +1,7 @@
+{
+    "fact.card.executorTitle": "Executor: ",
+    "fact.card.description": "Description: ",
+    "delete.fact.message": "Are you sure you want to delete selected execution fact?",
+    "delete.fact.cancel.message": "Cancel",
+    "delete.fact.submit.message": "Delete"
+}

@@ -1,0 +1,7 @@
+{
+    "fact.card.executorTitle": "Виконавець: ",
+    "fact.card.description": "Опис: ",
+    "delete.fact.message": "Чи ви впевнені, що хочете видалити обраний факт виконання?",
+    "delete.fact.cancel.message": "Відмінити",
+    "delete.fact.submit.message": "Видалити"
+}

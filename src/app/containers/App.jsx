@@ -1,26 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from 'react-router-dom';
+import Loading from 'components/Loading';
+import * as pages from 'constants/pages';
+import pageURLs from 'constants/pagesURLs';
+import AuthoritiesProvider from 'misc/providers/AuthoritiesProvider';
+import ThemeProvider from 'misc/providers/ThemeProvider';
+import UserProvider from 'misc/providers/UserProvider';
+import { addAxiosInterceptors } from 'misc/requests';
+import DefaultPage from 'pageProviders/Default';
+import ExecutionFactsListPage from "pageProviders/ExecutionFactsList";
+import LoginPage from 'pageProviders/Login';
+import SecretPage from 'pageProviders/Secret';
+import PageContainer from 'pageProviders/components/PageContainer';
+import React, { useEffect, useState } from 'react';
 import {
   useDispatch,
   useSelector,
 } from 'react-redux';
-import { addAxiosInterceptors } from 'misc/requests';
-import * as pages from 'constants/pages';
-import AuthoritiesProvider from 'misc/providers/AuthoritiesProvider';
-import DefaultPage from 'pageProviders/Default';
-import Loading from 'components/Loading';
-import LoginPage from 'pageProviders/Login';
-import PageContainer from 'pageProviders/components/PageContainer';
-import pageURLs from 'constants/pagesURLs';
-import SecretPage from 'pageProviders/Secret';
-import ThemeProvider from 'misc/providers/ThemeProvider';
-import UserProvider from 'misc/providers/UserProvider';
-import ExecutionFactsListPage from "pageProviders/ExecutionFactsList";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+} from 'react-router-dom';
 
+import actionsExecutionFact from '../actions/executionFacts';
 import actionsUser from '../actions/user';
 import Header from '../components/Header';
 import IntlProvider from '../components/IntlProvider';
@@ -115,7 +116,16 @@ function App() {
                       path={`${pageURLs[pages.login]}`}
                     />
                     <Route
-                      element={<ExecutionFactsListPage />}
+                      element={(
+                        <ExecutionFactsListPage
+                          fetchExecutionFacts={(filter) =>
+                            dispatch(actionsExecutionFact.fetchExecutionFacts(filter))
+                          }
+                          deleteExecutionFact={(factId) =>
+                            dispatch(actionsExecutionFact.performDeleteExecutionFact(factId))
+                          }
+                        />
+                      )}
                       path={`${pageURLs[pages.executionFactsList]}`}
                     />
                     <Route
