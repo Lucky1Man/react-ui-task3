@@ -16,7 +16,7 @@ const getClasses = createUseStyles((theme) => ({
     factCardContainer: {
         position: 'relative',
         margin: `${theme.spacing(0.4)}px`,
-        width: '320px'
+        width: '320px',
     },
     factContainer: {
         paddingLeft: `${theme.spacing(2)}px`,
@@ -68,7 +68,8 @@ function ExecutionFactCard({
     const [state, setState] = useState({
         isHovered: false,
         isDeleteDialogOpened: false,
-        isSelectedForDeletion: false
+        isSelectedForDeletion: false,
+        hasErrorsDeletingFact: false
     });
     const cardBackgroundColor = state.isSelectedForDeletion ? 'rgba(222, 81, 62, 1)' : chroma(theme.card.color.background.paper).css('rgba');
     const classes = getClasses({ theme, cardBackgroundColor });
@@ -113,22 +114,34 @@ function ExecutionFactCard({
             }}>
                 <div className={classes.deleteFactDialogMessage}>
                     <Typography>{formatMessage({ id: 'delete.fact.message' })}</Typography>
+                    {state.hasErrorsDeletingFact && <Typography color={'error'}>{formatMessage({ id: 'delete.fact.error' })}</Typography>}
                 </div>
+                
                 <div className={classes.deleteFactDialogActions}>
                     <Button onClick={() => setState({
                         ...state,
                         isDeleteDialogOpened: false,
                         isSelectedForDeletion: false,
-                        isHovered: false
+                        isHovered: false,
+                        hasErrorsDeletingFact: false,
                     })}>
                         {formatMessage({ id: 'delete.fact.cancel.message' })}
                     </Button>
                     <Button isLoading={hasPendingDelete} colorVariant='secondary' onClick={() => {
                         deleteExecutionFact(fact.id)
-                            .then(() => setState({
-                                ...state,
-                                isDeleteDialogOpened: false,
-                            }));
+                            .then(() => {
+                                setState({
+                                    ...state,
+                                    isDeleteDialogOpened: false,
+                                    hasErrorsDeletingFact: false,
+                                })
+                            })
+                            .catch(() => {
+                                setState({
+                                    ...state,
+                                    hasErrorsDeletingFact: true,
+                                })
+                            });
                     }}>
                         {formatMessage({ id: 'delete.fact.submit.message' })}
                     </Button>

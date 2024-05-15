@@ -14,13 +14,21 @@ import {
 } from '../constants/actionTypes';
 
 const initialState = {
-    executionFactsList: [],
+    filteredExecutionFactsDto: {
+        executionFacts: [],
+        totalPages: 0
+    },
     hasPendingDelete: false,
-    isLoadingExecutionFacts: false
+    isLoadingExecutionFacts: false,
+    errorsFetchingFactsByFilterMessage: undefined
 };
 
-const removeFactFromList = (factsList, factId) => {
-    return factsList.toSpliced(factsList.findIndex(fact => fact.id === factId), 1);
+const removeFactFromList = (factsDto, factId) => {
+    const facts = factsDto.executionFacts;
+    return {
+        executionFacts: facts.toSpliced(facts.findIndex(fact => fact.id === factId), 1),
+        totalPages: factsDto.totalPages
+    }
 }
 
 export default function Reducer(state = initialState, action) {
@@ -28,23 +36,26 @@ export default function Reducer(state = initialState, action) {
         case ERROR_RECEIVE_EXECUTION_FACTS: {
             return {
                 ...state,
-                isLoadingExecutionFacts: false
+                isLoadingExecutionFacts: false,
+                errorsFetchingFactsByFilterMessage: action.payload.message
             }
         }
         case REQUEST_EXECUTION_FACTS: {
             return {
                 ...state,
-                isLoadingExecutionFacts: true
+                isLoadingExecutionFacts: true,
+                errorsFetchingFactsByFilterMessage: initialState.errorsFetchingFactsByFilterMessage
             }
         }
         case RECEIVE_EXECUTION_FACTS: {
             return {
                 ...state,
-                executionFactsList: action.payload,
+                filteredExecutionFactsDto: action.payload,
                 isLoadingExecutionFacts: false
             }
         }
         case ERROR_DELETE_EXECUTION_FACT: {
+            //I display generic message if something goes wrong
             return {
                 ...state,
                 hasPendingDelete: false
@@ -59,8 +70,8 @@ export default function Reducer(state = initialState, action) {
         case SUCCESS_DELETE_EXECUTION_FACT: {
             return {
                 ...state,
-                executionFactsList: removeFactFromList(state.executionFactsList, action.payload),
-                hasPendingDelete: false
+                filteredExecutionFactsDto: removeFactFromList(state.filteredExecutionFactsDto, action.payload),
+                hasPendingDelete: false,
             }
         }
         default: {

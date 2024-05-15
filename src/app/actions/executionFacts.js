@@ -98,12 +98,14 @@ const deleteExecutionFact = (factId) => {
 
 
 
-const fetchExecutionFacts = ({ executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize }) => (dispatch) => {
+const fetchExecutionFacts = ({executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize}) => (dispatch) => {
     dispatch(requestExecutionFacts());
-    const result = getExecutionFacts({ executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize });
+    const result = getExecutionFacts({executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize});
     result
         .then(data => dispatch(receiveExecutionFacts(data)))
-        .catch(error => dispatch(errorReceiveExecutionFacts(error)))
+        .catch(error => {
+            dispatch(errorReceiveExecutionFacts(error));
+        })
     return result;
 }
 

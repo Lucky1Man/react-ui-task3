@@ -8,7 +8,6 @@ import useTheme from 'misc/hooks/useTheme';
 const getClasses = createUseStyles(theme => ({
   container: {
     alignItems: 'center',
-    background: theme.colors.background.secondary,
     display: 'flex',
     flexDirection: 'column',
     gap: `${theme.spacing(2)}px`,
