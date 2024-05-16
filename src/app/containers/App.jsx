@@ -11,6 +11,7 @@ import LoginPage from 'pageProviders/Login';
 import SecretPage from 'pageProviders/Secret';
 import PageContainer from 'pageProviders/components/PageContainer';
 import React, { useEffect, useState } from 'react';
+import ExecutionFactPage from 'pageProviders/ExecutionFact'
 import {
   useDispatch,
   useSelector,
@@ -129,6 +130,22 @@ function App() {
                           />
                         )}
                         path={`${pageURLs[pages.executionFactsList]}`}
+                      />
+                      <Route
+                        element={(
+                          <ExecutionFactPage
+                            fetchExecutionFact={(factId) => 
+                              dispatch(actionsExecutionFact.fetchExecutionFact(factId))
+                            }
+                            performCreateExecutionFact={(createDto) => 
+                              dispatch(actionsExecutionFact.performCreateExecutionFact(createDto))
+                            }
+                            performUpdateExecutionFact={(factId, updateDto) => 
+                              dispatch(actionsExecutionFact.performUpdateExecutionFact(factId, updateDto))
+                            }
+                          />
+                        )}
+                        path={`${pageURLs[pages.executionFact]}/:factId?`}
                       />
                       <Route
                         element={(

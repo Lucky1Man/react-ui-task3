@@ -1,18 +1,20 @@
-import axios from 'misc/requests';
 import config from 'config';
-import storage, { keys } from 'misc/storage';
+import axios from 'misc/requests';
 import {
-    ERROR_RECEIVE_EXECUTION_FACTS,
-    REQUEST_EXECUTION_FACTS,
-    RECEIVE_EXECUTION_FACTS,
     ERROR_DELETE_EXECUTION_FACT,
-    REQUEST_DELETE_EXECUTION_FACT,
-    SUCCESS_DELETE_EXECUTION_FACT,
+    ERROR_GET_EXECUTION_FACT,
+    ERROR_RECEIVE_EXECUTION_FACTS,
     ERROR_SAVE_EXECUTION_FACT,
-    REQUEST_SAVE_EXECUTION_FACT,
-    SUCCESS_SAVE_EXECUTION_FACT,
     ERROR_UPDATE_EXECUTION_FACT,
+    RECEIVE_EXECUTION_FACT,
+    RECEIVE_EXECUTION_FACTS,
+    REQUEST_DELETE_EXECUTION_FACT,
+    REQUEST_EXECUTION_FACT,
+    REQUEST_EXECUTION_FACTS,
+    REQUEST_SAVE_EXECUTION_FACT,
     REQUEST_UPDATE_EXECUTION_FACT,
+    SUCCESS_DELETE_EXECUTION_FACT,
+    SUCCESS_SAVE_EXECUTION_FACT,
     SUCCESS_UPDATE_EXECUTION_FACT
 } from '../constants/actionTypes';
 
@@ -48,6 +50,22 @@ const requestDeleteExecutionFact = (factId) => ({
 const successDeleteExecutionFact = (factId) => ({
     payload: factId,
     type: SUCCESS_DELETE_EXECUTION_FACT
+})
+
+//Get execution fact by id
+const errorGetExecutionFact = (errors) => ({
+    payload: errors,
+    type: ERROR_GET_EXECUTION_FACT
+})
+
+const requestExecutionFact = (factId) => ({
+    payload: factId,
+    type: REQUEST_EXECUTION_FACT
+})
+
+const receiveExecutionFact = (fact) => ({
+    payload: fact,
+    type: RECEIVE_EXECUTION_FACT
 })
 
 //Save execution fact
@@ -96,32 +114,88 @@ const deleteExecutionFact = (factId) => {
     })
 }
 
+const getExecutionFact = (factId) => {
+    return axios({
+        method: 'get',
+        url: `${EXECUTION_FACTS_SERVICE_URL}/${factId}`,
+    })
+}
+
+const createExecutionFact = (createDto) => {
+    return axios({
+        method: 'post',
+        url: `${EXECUTION_FACTS_SERVICE_URL}`,
+        data: createDto
+    })
+}
+
+const updateExecutionFact = (factId, updateDto) => {
+    return axios({
+        method: 'put',
+        url: `${EXECUTION_FACTS_SERVICE_URL}/${factId}`,
+        data: updateDto
+    })
+}
 
 
-const fetchExecutionFacts = ({executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize}) => (dispatch) => {
+
+const fetchExecutionFacts = ({ executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize }) => (dispatch) => {
     dispatch(requestExecutionFacts());
-    const result = getExecutionFacts({executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize});
-    result
+    const result = getExecutionFacts({ executorEmail, fromFinishTime, toFinishTime, description, pageIndex, pageSize });
+    return result
         .then(data => dispatch(receiveExecutionFacts(data)))
         .catch(error => {
             dispatch(errorReceiveExecutionFacts(error));
         })
-    return result;
 }
 
 const performDeleteExecutionFact = (factId) => (dispatch) => {
     dispatch(requestDeleteExecutionFact());
     const result = deleteExecutionFact(factId);
-    result
+    return result
         .then(() => dispatch(successDeleteExecutionFact(factId)))
         .catch(error => dispatch(errorDeleteExecutionFact(error)))
-    return result;
+}
+
+const fetchExecutionFact = (factId) => (dispatch) => {
+    dispatch(requestExecutionFact());
+    const result = getExecutionFact(factId);
+    return result
+        .then(data => dispatch(receiveExecutionFact(data)))
+        .catch(error => {
+            dispatch(errorGetExecutionFact(error));
+        })
+}
+
+const performCreateExecutionFact = (createDto) => (dispatch) => {
+    dispatch(requestSaveExecutionFact());
+    const result = createExecutionFact(createDto);
+    return result
+        .then(data => dispatch(successSaveExecutionFact(data)))
+        .catch(error => {
+            dispatch(errorSaveExecutionFact(error));
+        })
+}
+
+const performUpdateExecutionFact = (factId, updateDto) => (dispatch) => {
+    dispatch(requestUpdateExecutionFact(factId));
+    const result = updateExecutionFact(factId, updateDto);
+    return result
+        .then(() => {
+            dispatch(successUpdateExecutionFact(factId));
+        })
+        .catch(error => {
+            dispatch(errorUpdateExecutionFact(error));
+        })
 }
 
 
 const exportFunctions = {
     fetchExecutionFacts,
-    performDeleteExecutionFact
+    performDeleteExecutionFact,
+    fetchExecutionFact,
+    performCreateExecutionFact,
+    performUpdateExecutionFact
 };
 
 export default exportFunctions;

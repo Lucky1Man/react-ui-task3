@@ -13,7 +13,9 @@ const addAxiosInterceptors = ({
   onSignOut,
 }) => {
   axios.interceptors.response.use(
-    (response) => response.data,
+    (response) => {
+      return response.data
+    },
     (error) => {
       if (error.response.data.some?.(beError => beError?.code === 'INVALID_TOKEN')
       ) {

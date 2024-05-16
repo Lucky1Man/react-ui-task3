@@ -6,6 +6,10 @@ import { useIntl } from 'react-intl';
 import { createUseStyles } from 'react-jss';
 import ExecutionFactFilter from '../components/ExecutionFactFilter';
 import ExecutionFactsList from '../components/ExecutionFactsList';
+import { useNavigate } from "react-router-dom";
+import * as pages from 'constants/pages';
+import pageURLs from 'constants/pagesURLs';
+import { useSelector } from 'react-redux';
 
 const getClasses = createUseStyles({
     elementContainer: {
@@ -34,24 +38,23 @@ function ExecutionFacts({
     deleteExecutionFact, // parameter factId
 }) {
     const classes = getClasses();
-    const [deletionWasPerformed, setDeletionWasPerformed] = useState(undefined);
+    const [deletionWasPerformed, setDeletionWasPerformed] = useState(false);
     const { formatMessage } = useIntl();
+    const navigate = useNavigate();
+    const executionFactsStore = useSelector(({ executionFacts }) => executionFacts);
     return (<>
         <div className={classes.elementContainer}>
             <ExecutionFactFilter fetchExecutionFacts={fetchExecutionFacts}></ExecutionFactFilter>
             <ExecutionFactsList
                 deleteExecutionFact={(factId) => {
+                    setDeletionWasPerformed(true)
                     return deleteExecutionFact(factId)
-                        .then((response) => {
-                            setDeletionWasPerformed(factId);
-                            return Promise.resolve(response);
-                        })
                 }}
             ></ExecutionFactsList>
             <Snackbar
-                open={deletionWasPerformed !== undefined}
+                open={deletionWasPerformed && executionFactsStore.successDelete}
                 onClose={() => {
-                    setDeletionWasPerformed(undefined)
+                    setDeletionWasPerformed(false)
                 }}
                 autoHideDuration={3000}
                 message={formatMessage({ id: 'delete.fact.success.message' })}
@@ -61,7 +64,12 @@ function ExecutionFacts({
                 }}
             />
             <div className={classes.addButton}>
-                <Fab color={'warning'}>
+                <Fab
+                    color={'warning'}
+                    onClick={() => {
+                        navigate(pageURLs[pages.executionFact]);
+                    }}
+                >
                     <Add color='rgba(255, 255, 255, 1)'></Add>
                 </Fab>
             </div>

@@ -1,11 +1,10 @@
 import Loading from 'components/Loading';
-import Typography from 'components/Typography';
-import { createUseStyles } from 'react-jss';
-import ExecutionFactCard from './ExecutionFactCard';
-import { useSelector } from "react-redux";
-import { useIntl } from 'react-intl';
 import Snackbar from 'components/Snackbar';
-import { useState } from 'react';
+import Typography from 'components/Typography';
+import { useIntl } from 'react-intl';
+import { createUseStyles } from 'react-jss';
+import { useSelector } from "react-redux";
+import ExecutionFactCard from './ExecutionFactCard';
 
 
 const getClasses = createUseStyles({
@@ -30,9 +29,6 @@ function ExecutionFactsList({
     const classes = getClasses();
     const executionFactsStore = useSelector(({ executionFacts }) => executionFacts);
     const { formatMessage } = useIntl();
-    const [state, setState] = useState({
-        externalErrors: ''
-    })
     return (<>
         <div className={classes.factsContainer}>
             {executionFactsStore.isLoadingExecutionFacts &&
@@ -54,7 +50,6 @@ function ExecutionFactsList({
             ))}
             <Snackbar
                 open={executionFactsStore.errorsFetchingFactsByFilterMessage !== undefined}
-                autoHideDuration={3000}
                 message={executionFactsStore.errorsFetchingFactsByFilterMessage}
                 anchorOrigin={{
                     horizontal: 'center',
