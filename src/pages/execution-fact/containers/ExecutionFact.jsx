@@ -81,14 +81,18 @@ function ExecutionFact({
     useEffect(() => {
         if (executionFactsStore.saveFactResult.success) {
             fetchExecutionFact(executionFactsStore.saveFactResult.factId);
-        } else if(executionFactsStore.successFactUpdate) {
+        }
+    }, [fetchExecutionFact, executionFactsStore.saveFactResult])
+    useEffect(() => {
+        if (executionFactsStore.successFactUpdate) {
             fetchExecutionFact(executionFactsStore.originalFact.id);
         }
-    }, [fetchExecutionFact, executionFactsStore.saveFactResult, executionFactsStore.successFactUpdate])
+    }, [fetchExecutionFact, executionFactsStore.successFactUpdate])
     useEffect(() => {
         setState((oldState) => ({
             ...oldState,
-            originalFact: executionFactsStore.originalFact
+            originalFact: executionFactsStore.originalFact,
+            activeMode: getActualMode(pageModes.view),
         }));
     }, [executionFactsStore.originalFact]);
     const navigate = useNavigate();

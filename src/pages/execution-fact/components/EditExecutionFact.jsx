@@ -62,8 +62,18 @@ function ExecutionFact({
     const [state, setState] = useState(initialState(originalFact));
     if (state.saveWasMade && saveSuccess) {
         backToViewMode();
+        setState({
+            ...state,
+            saveWasMade: false,
+            updateWasMade: false
+        });
     } else if (state.updateWasMade && updateSuccess) {
         backToViewMode();
+        setState({
+            ...state,
+            saveWasMade: false,
+            updateWasMade: false
+        });
     }
     useEffect(() => {
         setState({

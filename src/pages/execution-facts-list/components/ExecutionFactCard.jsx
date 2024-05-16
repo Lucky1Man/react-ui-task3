@@ -9,7 +9,7 @@ import Delete from 'components/icons/Delete';
 import { executionFact as executionFactPage } from 'constants/pages';
 import pagesURLs from 'constants/pagesURLs';
 import useTheme from 'misc/hooks/useTheme';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useIntl } from 'react-intl';
 import { createUseStyles } from 'react-jss';
 import { useSelector } from "react-redux";

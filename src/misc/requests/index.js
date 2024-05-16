@@ -17,11 +17,14 @@ const addAxiosInterceptors = ({
       return response.data
     },
     (error) => {
-      if (error.response.data.some?.(beError => beError?.code === 'INVALID_TOKEN')
+      if (error?.response?.data.some?.(beError => beError?.code === 'INVALID_TOKEN')
       ) {
         onSignOut();
       }
-      throw error.response.data;
+      if (error?.code === 'ERR_NETWORK') {
+        return Promise.reject(error.code);
+      }
+      throw error?.response?.data;
     }
   );
 };
