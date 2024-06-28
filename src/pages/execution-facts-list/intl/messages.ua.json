@@ -1,0 +1,14 @@
+{
+    "fact.card.executorTitle": "Виконавець: ",
+    "fact.card.description": "Опис: ",
+    "delete.fact.message": "Чи ви впевнені, що хочете видалити обраний факт виконання?",
+    "delete.fact.cancel.message": "Відмінити",
+    "delete.fact.submit.message": "Видалити",
+    "delete.fact.success.message": "Обраний факт виконання був видалиний.",
+    "facts.list.noItems": "Не знайдено фактів виконання для даного фільтру.",
+    "facts.filter.description.label": "Опис",
+    "facts.filter.email.label": "Емейл",
+    "filter.apply": "Застосувати",
+    "filter.clear": "Очистити",
+    "delete.fact.error": "Не вдалось видалити обраний факт виконання, спробуйте пізніше."
+}

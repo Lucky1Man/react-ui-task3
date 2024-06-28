@@ -1,5 +1,5 @@
 import axios from 'misc/requests';
-import config from 'config';
+import config from '../../config';
 import storage, { keys } from 'misc/storage';
 import {
   ERROR_SIGN_IN,
@@ -11,7 +11,11 @@ import {
   REQUEST_USER,
   SUCCESS_SIGN_IN,
   SUCCESS_SIGN_UP,
+  ERROR_REQUEST_USER
 } from '../constants/actionTypes';
+
+import * as pages from 'constants/pages';
+import pageURLs from 'constants/pagesURLs';
 
 const MOCK_USER_AUTH = {
   login: 'admin',
@@ -40,6 +44,10 @@ const receiveUser = (user) => ({
 
 const requestUser = () => ({
   type: REQUEST_USER,
+});
+
+const errorRequestUser = () => ({
+  type: ERROR_REQUEST_USER,
 });
 
 const errorSignIn = (errors) => ({
@@ -77,7 +85,7 @@ const getUser = () => {
   const {
     USERS_SERVICE,
   } = config;
-  return axios.get(`${USERS_SERVICE}/user/get`);
+  return axios.get(`${USERS_SERVICE}/api/profile`);
 };
 
 const signIn = ({
@@ -134,22 +142,24 @@ const fetchSignIn = ({
     email,
     login,
     password,
-  }).catch(() => {
-    // TODO: Mocked '.catch()' section
-    if (login === MOCK_USER_AUTH.login && password === MOCK_USER_AUTH.password) {
-      return MOCK_USER_AUTH_RESPONSE;
-    }
-    return Promise.reject([
-      {
-        code: 'WRONG_LOGIN_OR_PASSWORD',
-      },
-    ]);
-  }).then(({ token, user }) => {
-    storage.setItem(keys.TOKEN, token.value);
-    storage.setItem(keys.TOKEN_EXPIRATION, token.expirationTimestamp);
-    storage.setItem('USER', JSON.stringify(user)); // TODO: mocked code
-    dispatch(successSignIn(user));
-  }).catch((errors) => dispatch(errorSignIn(errors)));
+  })
+    .catch(() => {
+      // TODO: Mocked '.catch()' section
+      if (login === MOCK_USER_AUTH.login && password === MOCK_USER_AUTH.password) {
+        return MOCK_USER_AUTH_RESPONSE;
+      }
+      return Promise.reject([
+        {
+          code: 'WRONG_LOGIN_OR_PASSWORD',
+        },
+      ]);
+    })
+    .then(({ token, user }) => {
+      storage.setItem(keys.TOKEN, token.value);
+      storage.setItem(keys.TOKEN_EXPIRATION, token.expirationTimestamp);
+      storage.setItem('USER', JSON.stringify(user)); // TODO: mocked code
+      dispatch(successSignIn(user));
+    }).catch((errors) => dispatch(errorSignIn(errors)));
 };
 
 const fetchSignOut = () => (dispatch) => {
@@ -178,22 +188,22 @@ const fetchSignUp = ({
 };
 
 const fetchUser = () => (dispatch) => {
-  if (!storage.getItem(keys.TOKEN)) {
-    return null;
-  }
   dispatch(requestUser());
   return getUser()
-    // TODO Mocked '.catch()' section
-    .catch((err) => {
-      const user = storage.getItem('USER');
-      if (user) {
-        const parsedUser = JSON.parse(user);
-        return parsedUser;
-      }
-      return Promise.reject(err);
+    .then(user => {
+      dispatch(successSignIn({
+        ...user,
+        authorities: ['ENABLE_SEE_SECRET_PAGE'],
+        firstName: user.name
+      }));
     })
-    .then(user => dispatch(receiveUser(user)))
-    .catch(() => dispatch(fetchSignOut()));
+    .catch((error) => {
+      if (error.status === 401) {
+        dispatch(errorRequestUser());
+        return Promise.reject({ status: 401 });
+      }
+      dispatch(fetchSignOut());
+    });
 };
 
 const exportFunctions = {

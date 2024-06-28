@@ -1,25 +1,25 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { createUseStyles } from 'react-jss';
-import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 import Button from 'components/Button';
 import Hover from 'components/Hover';
 import IconButton from 'components/IconButton';
-import IconGlobus from 'components/icons/Globus';
 import Link from 'components/Link';
 import Logo from 'components/Logo';
 import Menu from 'components/Menu';
 import MenuItem from 'components/MenuItem';
 import Typography from 'components/Typography';
+import IconGlobus from 'components/icons/Globus';
 import useChangePage from 'misc/hooks/useChangePage';
 import useCurrentPage from 'misc/hooks/useCurrentPage';
 import useIsMobile from 'misc/hooks/useIsMobile';
 import useLocationSearch from 'misc/hooks/useLocationSearch';
 import useTheme from 'misc/hooks/useTheme';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { createUseStyles } from 'react-jss';
+import { useSelector } from 'react-redux';
 
 import * as pages from 'constants/pages';
-import languages from 'misc/constants/languages';
 import pagesURLs from 'constants/pagesURLs';
+import languages from 'misc/constants/languages';
 
 import LeftNavBar from './LeftNavBar';
 
@@ -86,6 +86,7 @@ const rightPanelItemTypes = {
 
 function Header({
   onLogout,
+  onHeaderLoaded,
 }) {
   const { theme } = useTheme();
   const { formatMessage } = useIntl();
@@ -97,6 +98,16 @@ function Header({
   const locationSearch = useLocationSearch();
   const user = useSelector(({ user: reducerUser }) => reducerUser);
   const userMenuRef = useRef(null);
+
+  const goToLoginPage = useChangePage();
+  useEffect(() => {
+    onHeaderLoaded()
+      .catch((error) => {
+        if (error.status === 401) {
+          goToLoginPage({ pathname: pagesURLs[pages.login] });
+        }
+      })
+  }, [])
 
   const [state, setState] = useState({
     isLangsMenuOpened: false,
