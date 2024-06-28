@@ -233,7 +233,10 @@ const fetchExecutionFacts = ({ executorEmail, fromFinishTime, toFinishTime, desc
             }
             return Promise.reject(error);
         })
-        .then(data => dispatch(receiveExecutionFacts(data)))
+        .then(data =>{
+            dispatch(receiveExecutionFacts(data));
+            console.log(data);
+        })
         .catch(error => {
             dispatch(errorReceiveExecutionFacts(error));
         })

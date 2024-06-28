@@ -6,12 +6,12 @@ import ThemeProvider from 'misc/providers/ThemeProvider';
 import UserProvider from 'misc/providers/UserProvider';
 import { addAxiosInterceptors } from 'misc/requests';
 import DefaultPage from 'pageProviders/Default';
+import ExecutionFactPage from 'pageProviders/ExecutionFact';
 import ExecutionFactsListPage from "pageProviders/ExecutionFactsList";
 import LoginPage from 'pageProviders/Login';
 import SecretPage from 'pageProviders/Secret';
 import PageContainer from 'pageProviders/components/PageContainer';
 import React, { useEffect, useState } from 'react';
-import ExecutionFactPage from 'pageProviders/ExecutionFact'
 import {
   useDispatch,
   useSelector,
@@ -22,13 +22,13 @@ import {
   Routes,
 } from 'react-router-dom';
 
+import ExecutionFactFilterProvider from 'pages/execution-facts-list/providers/ExecutionFactFilter';
 import actionsExecutionFact from '../actions/executionFacts';
 import actionsUser from '../actions/user';
 import Header from '../components/Header';
 import IntlProvider from '../components/IntlProvider';
 import MissedPage from '../components/MissedPage';
 import SearchParamsConfigurator from '../components/SearchParamsConfigurator';
-import ExecutionFactFilterProvider from 'pages/execution-facts-list/providers/ExecutionFactFilter';
 
 function App() {
   const dispatch = useDispatch();
@@ -44,12 +44,10 @@ function App() {
     isFetchingSignUp,
     isFetchingUser,
   } = useSelector(({ user }) => user);
-
   useEffect(() => {
     addAxiosInterceptors({
       onSignOut: () => dispatch(actionsUser.fetchSignOut()),
     });
-    dispatch(actionsUser.fetchUser());
     setState({
       ...state,
       componentDidMount: true,
@@ -68,7 +66,10 @@ function App() {
               * initializing) */}
               {state.componentDidMount && (
                 <IntlProvider>
-                  <Header onLogout={() => dispatch(actionsUser.fetchSignOut())} />
+                  <Header
+                    onLogout={() => dispatch(actionsUser.fetchSignOut())}
+                    onHeaderLoaded={() => dispatch(actionsUser.fetchUser())}
+                  />
                   {isFetchingUser && (
                     <PageContainer>
                       <Loading />
@@ -134,13 +135,13 @@ function App() {
                       <Route
                         element={(
                           <ExecutionFactPage
-                            fetchExecutionFact={(factId) => 
+                            fetchExecutionFact={(factId) =>
                               dispatch(actionsExecutionFact.fetchExecutionFact(factId))
                             }
-                            performCreateExecutionFact={(createDto) => 
+                            performCreateExecutionFact={(createDto) =>
                               dispatch(actionsExecutionFact.performCreateExecutionFact(createDto))
                             }
-                            performUpdateExecutionFact={(factId, updateDto) => 
+                            performUpdateExecutionFact={(factId, updateDto) =>
                               dispatch(actionsExecutionFact.performUpdateExecutionFact(factId, updateDto))
                             }
                           />

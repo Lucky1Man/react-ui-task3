@@ -1,6 +1,3 @@
-import { createUseStyles } from 'react-jss';
-import { useIntl } from 'react-intl';
-import useTheme from 'misc/hooks/useTheme';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import CardActions from 'components/CardActions';
@@ -8,13 +5,19 @@ import CardContent from 'components/CardContent';
 import CardTitle from 'components/CardTitle';
 import Dialog from 'components/Dialog';
 import IconButton from 'components/IconButton';
+import Link from 'components/Link';
+import TextField from 'components/TextField';
+import Typography from 'components/Typography';
 import IconClose from 'components/icons/Close';
 import IconVisibilityOff from 'components/icons/VisibilityOff';
 import IconVisibilityOn from 'components/icons/VisibilityOn';
 import md5 from 'md5';
+import useTheme from 'misc/hooks/useTheme';
 import React, { useEffect, useState } from 'react';
-import TextField from 'components/TextField';
-import Typography from 'components/Typography';
+import GoogleButton from 'react-google-button';
+import { useIntl } from 'react-intl';
+import { createUseStyles } from 'react-jss';
+import config from '../../../config';
 
 import * as errorCodes from '../constants/errorCodes';
 
@@ -28,6 +31,7 @@ const getClasses = createUseStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'column'
   },
   content: {
     display: 'flex',
@@ -40,6 +44,9 @@ const getClasses = createUseStyles((theme) => ({
     flexDirection: 'column',
     gap: `${theme.spacing(2)}px`,
   },
+  googleOauth: {
+    marginTop: '30px'
+  }
 }));
 
 const errorTypes = {
@@ -220,6 +227,16 @@ function Login({
           </Button>
         </div>
       </div>
+      <div className={classes.googleOauth}>
+        <Link
+          to={{
+            pathname: config.GOOGLE_OAUTH_LINK,
+          }}
+        >
+          <GoogleButton></GoogleButton>
+        </Link>
+      </div>
+
       <Dialog
         maxWidth="xs"
         open={state.isSignUpDialogOpened}
@@ -249,9 +266,9 @@ function Login({
               <TextField
                 helperText={state.signUpValidationErrors
                   .includes(errorTypes.EMPTY_SIGN_UP_LOGIN)
-                && formatMessage({
-                  id: `signUp.error.${errorTypes.EMPTY_SIGN_UP_LOGIN}`,
-                })}
+                  && formatMessage({
+                    id: `signUp.error.${errorTypes.EMPTY_SIGN_UP_LOGIN}`,
+                  })}
                 isError={state.signUpValidationErrors
                   .includes(errorTypes.EMPTY_SIGN_UP_LOGIN)}
                 label={formatMessage({ id: 'field.login' })}

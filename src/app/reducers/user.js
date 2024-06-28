@@ -9,6 +9,7 @@ import {
   REQUEST_USER,
   SUCCESS_SIGN_IN,
   SUCCESS_SIGN_UP,
+  ERROR_REQUEST_USER
 } from '../constants/actionTypes';
 
 const initialState = {
@@ -95,6 +96,13 @@ export default function Reducer(state = initialState, action) {
       return {
         ...state,
         isFetchingUser: true,
+      };
+    }
+
+    case ERROR_REQUEST_USER: {
+      return {
+        ...state,
+        isFetchingUser: false,
       };
     }
 
